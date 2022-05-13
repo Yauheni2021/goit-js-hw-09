@@ -4,24 +4,58 @@ import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 
 import Notiflix from 'notiflix';
-// flatpickr("#datetime-picker", { dateFormat });
+
+const refs = {
+    timer: document.querySelector('.timer'),
+    startBtn: document.querySelector('[data-start]'),
+    input: document.querySelector('input#datetime-picker'),
+    days: document.querySelector('[data-days]'),
+    hours: document.querySelector('[data-hours]'),
+    minutes: document.querySelector('[data-minutes]'),
+    seconds: document.querySelector('[data-seconds]'),
+}
+
+let intervalId = null;
+
+const options = {
+    enableTime: true,
+    time_24hr: true,
+    defaultDate: new Date(),
+    minuteIncrement: 1,
+    onClose(selectedDates) {
+        if (selectedDates[0].getTime() < new Date().getTime()) {
+            Notiflix.Notify.warning("Please choose a date in the future");
+            clearInterval(intervalId);
+            updateTimeValue({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+        } else { refs.startBtn.disabled = false; };
+    },
+};
+  
+const fp = flatpickr(refs.input, options);
 
 
+refs.startBtn.addEventListener('click', onStartClick);
 
+function onStartClick () {
+    intervalId = setInterval(() => {
+        const newDate = new Date();
+        const selectedDate = fp.selectedDates[0];
+        const timerDate = selectedDate.getTime() - newDate.getTime();
 
+        if (timerDate < 0) {
+            clearInterval(intervalId);
+            return;
+        }
 
+        const convertedDate = convertMs(timerDate);
+        updateTimeValue(convertedDate);
+        refs.startBtn.disabled = true
+    }, 1000);
+};
 
-
-
-
-
-
-
-
-
-
-
-
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+};
 
 
 
@@ -43,3 +77,11 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+
+function updateTimeValue(config) {
+    refs.days.textContent = addLeadingZero(config.days);
+    refs.hours.textContent = addLeadingZero(config.hours);
+    refs.minutes.textContent = addLeadingZero(config.minutes);
+    refs.seconds.textContent = addLeadingZero(config.seconds);
+};
+
