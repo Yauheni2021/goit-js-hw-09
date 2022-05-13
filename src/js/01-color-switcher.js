@@ -20,6 +20,7 @@ function onSwitcherStartClick() {
 
 function onSwitcherStopClick() {
     clearInterval(timeoutId);
+    refs.btnStart.removeAttribute('disabled');
 }
 
 

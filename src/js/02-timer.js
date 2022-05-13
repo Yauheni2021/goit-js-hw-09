@@ -1,4 +1,7 @@
+// Описан в документации
 import flatpickr from "flatpickr";
-import flatpickr from "flatpickr";
+// Дополнительный импорт стилей
+import "flatpickr/dist/flatpickr.min.css";
 
-flatpickr("#datetime-picker", { dateFormat });
+// flatpickr("#datetime-picker", { dateFormat });
+
